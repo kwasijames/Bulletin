@@ -10,7 +10,7 @@
 	<h3><%= event.name %></h3>
 	<h4><%= event.datePart %>, <%= event.timePart %>, <%= event.address %></h4><br />
 	<%= event.shortDesc %><br /><br />
-	<!-- Need all events to show up right now only 10 is showing -->
+	<!-- Need all events to show up right now only 10 is showing pagination API -->
 	<!-- Need to render HTML events.desc -->
 	<a class = "show-details" id = "show-details-<%= event.guid %>" href="#">Show Details</a>
 	<div id="desc<%= event.guid %>" style="display: none">

@@ -4,7 +4,7 @@ $(document).ready(function() {
 	});
 });
 	
-	// Allow for toggeling of the description by clicking the show details link
+// Allow for toggeling of the description by clicking the show details link
 function toggle(id){
 	if($("#"+id).is(":hidden")){
 		// hidden element
