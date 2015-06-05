@@ -5,7 +5,7 @@ var request = require("request");
 // Templating
 var ejs = require("ejs");
 app.set("view engine", "ejs");
-app.use(express.static(__dirname + "/Public"));
+app.use(express.static(__dirname + "/public"));
 
 // body parser
 var bodyParser = require("body-parser");
@@ -18,11 +18,22 @@ var methodOverride = require("method-Override");
 // tell which overide method to use
 app.use(methodOverride("method"));
 
+var bcrypt = require('bcrypt');
+
 var sqlite3 = require("sqlite3").verbose();
 var db = new sqlite3.Database("db/bulletin.db");
 
-// to retrive api key
+// Needed for sessions
+var session = require("express-session");
+
+// to retrive api key and password 
 var secrets = require('./secrets.json');
+
+app.use(session({
+	secret: secrets.password,
+	resave: false,
+	saveUninitialized: true
+}));
 
 // New York events calendar api
 // begining of api search string before the search term
@@ -46,13 +57,55 @@ app.get("/events", function(req, res){
 	request("https://api.cityofnewyork.us/calendar/v1/search.htm?app_id=3488f509&app_key=a58c77685001ce0633fd1b8e8fe61d8e", function(err, response, body){
 			if(err){
 				console.log(err)
-			} else {
+			} 
+			else {
 				var events = JSON.parse(body).items;
-				console.log(events[0].name);
-				console.log(events[0].desc);
+				console.log(events[0].desc)
+				res.render("index.ejs", {events:events});
 			}
 	});
 });
+
+// route to the login page 
+app.get("/login", function(req, res){
+	res.render("login.ejs")
+});
+
+// Regester New User and persist to the database
+app.post("/user", function(req, res){
+	console.log("in user");
+	// console.log(req.body);
+
+	var username = req.body.username;
+	var email = req.body.email;
+	var borough = req.body.borough;
+	var password = req.body.password;
+	var confirm_password = req.body.confirm_password;
+
+	// console.log(req.body.email);
+	// console.log(req.body.username);
+	// console.log(req.body.borough);
+	// console.log(req.body.password);
+	// console.log(req.body.confirm_password);
+	// if password and confirm_passwors != redirect to login
+	if(password != confirm_password){
+		res.redirect("/login");
+	} 
+	// Create a new user and persist user info to the database
+	else {
+		db.run("INSERT INTO users (username, password, email, borough) VALUES (?, ?, ?, ?)", username, password, email, borough, function(err){
+			if (err) { throw err; }
+			console.log("here");
+			req.session.valid_user = true;
+			res.redirect("/events");
+		});
+
+	}
+
+
+}); 
+
+
 
 app.listen("3000");
 console.log("Listening on port 3000");
