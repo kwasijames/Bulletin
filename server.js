@@ -58,6 +58,13 @@ app.get("/", function(req, res){
 // Show a list of all events taking place in NYC five boroughs
 app.get("/events", function(req, res){
 
+	// If user is logged in route them to events happening in their borough else route them to all events
+	if(req.session.valid_user){
+
+	} 
+
+	else {
+
 	// Make a request to the NYC Event Calendar for a list of events
 	request("https://api.cityofnewyork.us/calendar/v1/search.htm?app_id=3488f509&app_key=a58c77685001ce0633fd1b8e8fe61d8e", function(err, response, body){
 			if(err){
@@ -69,6 +76,7 @@ app.get("/events", function(req, res){
 				res.render("index.ejs", {events:events});
 			}
 	});
+}
 });
 
 // route to the login page 
