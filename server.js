@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 var methodOverride = require("method-Override");
 
 // tell which overide method to use
-app.use(methodOverride("method"));
+app.use(methodOverride("_method"));
 
 var bcrypt = require('bcrypt');
 
@@ -42,13 +42,13 @@ app.use(session({
 
 // New York events calendar api
 // begining of api search string before the search term
-var apiStart = "https://api.cityofnewyork.us/calendar/v1/search.htm?"
+var apiStart = "https://data.cityofnewyork.us/resource/tvpp-9vvx.json?"
 
-// retrive app_id for API from secrets.json
-var app_id = secrets.app_id;
+//**** retrive app_id for API from secrets.json *************
+//var app_id = secrets.app_id;
 
-// retrive app_key for API from secrets.json
-var app_key = secrets.app_key;
+//***** retrive app_key for API from secrets.json **************
+//var app_key = secrets.app_key;
 
 // Redirect to the events page
 app.get("/", function(req, res){
@@ -58,36 +58,29 @@ app.get("/", function(req, res){
 // Show a list of all events taking place in NYC five boroughs
 app.get("/events", function(req, res){
 
-	// If user is logged in route them to events happening in their borough else route them to all events
-	if(req.session.valid_user){
+	// Make a request to the NYC Event Calendar for a list of events(Bk, Bx, Mn, Qn, SI)
 
-	} 
-
-	else {
-
-	// Make a request to the NYC Event Calendar for a list of events
-	request("https://api.cityofnewyork.us/calendar/v1/search.htm?app_id=3488f509&app_key=a58c77685001ce0633fd1b8e8fe61d8e", function(err, response, body){
+	request("https://data.cityofnewyork.us/resource/tvpp-9vvx.json?", function(err, response, body){
 			if(err){
 				console.log(err)
 			} 
 			else {
-				var events = JSON.parse(body).items;
-				console.log(events[0].desc)
+				var events = JSON.parse(body);
+				console.log(events)
 				res.render("index.ejs", {events:events});
 			}
 	});
-}
 });
 
 // route to the login page 
 app.get("/login", function(req, res){
-	res.render("login.ejs")
+	res.render("login.ejs");
 });
 
 // Regester New User and persist to the database
 app.post("/user", function(req, res){
 	console.log("in user");
-	// console.log(req.body);
+	console.log(req.body);
 
 	var username = req.body.username;
 	var email = req.body.email;
@@ -102,23 +95,68 @@ app.post("/user", function(req, res){
 	else {
 		var hash = bcrypt.hashSync(secrets.password, 10);
 
-		// Create a new user and persist user info to the database
-		db.run("INSERT INTO users (username, password, email, borough) VALUES (?, ?, ?, ?)", username, hash, email, borough, function(err){
+		//Create a new user and persist user info to the database
+		db.run("INSERT INTO users (username, password, email, user_borough) VALUES (?, ?, ?, ?)", username, hash, email, borough, function(err){
 			if (err) { throw err; }
-			console.log(db);
 			console.log("here");
 			req.session.valid_user = true;
-			res.redirect("/events");
 
-			// have to put an exception in /events to make sure user is loged in if so hit the api for results in their borough.
+		//****Make request to  the NYC Event Calendar for a list of events based on users borough**** may have to correct
+		request("https://data.cityofnewyork.us/resource/tvpp-9vvx.json?event_borough=" + borough, function(err, response, body){
+			if(err){
+				console.log(err)
+			} else {
+				var events = JSON.parse(body);
+				res.render("index.ejs", {events: events});
+			}
 		});
 
-	}
+		});
 
-
+		}	
 }); 
 
+// start scession if user is loged in (/login)
+app.post("/session", function(req, res){
+	var username = req.body.username;
+	var password = req.body.password;
 
+	// Check user password against password in the database if incorrect redirect them to login
+	db.get("SELECT * FROM users WHERE username = ?", username, function(err, row){
+		if(err) { throw err; }
+		if(row) {
+			var passwordMatch = bcrypt.compareSync(password, row.password);
+			if(password) {
+				req.session.valid_user = true;
+				req.user = row.username;
+
+			request("https://data.cityofnewyork.us/resource/tvpp-9vvx.json?event_borough=" + row.user_borough, function(err, response, body){
+			if(err){
+				console.log(err)
+			} else {
+				var events = JSON.parse(body);
+				res.render("index.ejs", {events: events});
+			}
+		});
+
+		}
+		else {
+			res.redirect("/login");
+		}
+	} else{
+		res.redirect("/login");
+	}
+	});
+
+});
+
+
+
+// allow user to save events
+app.post("/create", function(req, res){
+	console.log(req.body);
+
+});
 
 app.listen("3000");
 console.log("Listening on port 3000");
@@ -126,11 +164,39 @@ console.log("Listening on port 3000");
 
 
 
+// Api key for NYC Events Calendar by boroughs "https://api.cityofnewyork.us/calendar/v1/search.htm?app_id=3488f509&app_key=a58c77685001ce0633fd1b8e8fe61d8e&boroughs=Bk"
+
+
+	// If user is logged in route them to events happening in their borough else route them to all events 
+	// if(req.session.valid_user){
+	// 	console.log("In user's events based on borough");
+	// 	console.log(req.params.id);
+	// 	db.get("SELECT * FROM users WHERE username = ?", username, function(err, data){
+	// 		if(err){
+	// 			throw err;
+	// 		} else {
+	// 			user = data;
+	// 			console.log(data);
+	// 		}
+	// 	})
+		// Make request to  the NYC Event Calendar for a list of events based on users borough
+		// request("https://api.cityofnewyork.us/calendar/v1/search.htm?app_id=3488f509&app_key=a58c77685001ce0633fd1b8e8fe61d8e&boroughs=Bk", function(err, response, body){
+		// 	if(err){
+		// 		console.log(err)
+		// 	} else {
+		// 		var events = JSON.parse(body).items;
+		// 		res.render("index.ejs", {events: events});
+		// 	}
+		// });
+
+	// } else {
 
 
 
 
+// NYC Events Calander API
+//"https://api.cityofnewyork.us/calendar/v1/search.htm?"
 
-
-
-
+// API key ,
+	//"app_id": "3488f509",
+	//"app_key": "a58c77685001ce0633fd1b8e8fe61d8e"

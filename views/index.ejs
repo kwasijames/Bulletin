@@ -1,25 +1,33 @@
-<!DOCTYPE html>
-<head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	<script type="text/javascript" src="/scripts.js"></script>
-</head>
-<body>
-<h1>Welcome</h1>
-<% events.forEach(function(event){ %>
-<div>
-	<h3><%= event.name %></h3>
-	<h4><%= event.datePart %>, <%= event.timePart %>, <%= event.address %></h4><br />
-	<%= event.shortDesc %><br /><br />
+<% include ./partials/head %>
+<div class="container">
+	<h1>Welcome</h1>
+	<div class="row">
+		<div class="col-md-6">
+		<% events.forEach(function(event){ %>
+			<div>
+
+				<h3><%= event.event_name %></h3>
+				<h4><%= event.start_date_time %>, <%= event.end_date_time %>, <%= event.event_borough %></h4>
+					<%= event.event_type %><br /><br />
 	<!-- Need all events to show up right now only 10 is showing pagination API -->
 	<!-- Need to render HTML events.desc -->
-	<a class = "show-details" id = "show-details-<%= event.guid %>" href="#">Show Details</a>
-	<div id="desc<%= event.guid %>" style="display: none">
-		<%= event.desc %>
-	</div><br />
-	<button id="save-button">Save</button>
-	<button id="directions">Directions</button>
-<div><br />
+					<a class = "show-details" id = "show-details-<%= event.event_id %>" href="#">Show Details</a>
+						<div id="desc<%= event.event_id %>" style="display: none">
+							<%= event.event_location %><br />
+							<%= event.street_closure_type %>
+						</div><br />
+
+	
+		<!-- Think about moving these two into the show details -->
+							<form action="/create?_method=POST" method="POST" >
+								<button class="btn btn-primary" id="save-button" >Save</button>
+								<button class="btn btn-primary" id="directions">Directions</button>
+							</form>
+							
+   		    </div><br />
 	
 <% }) %>
-</body>
-</html>
+	</div>
+	</div>
+</div>
+<% include ./partials/footer %>
