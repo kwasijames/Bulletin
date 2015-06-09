@@ -2,12 +2,16 @@
 <div class="container">
 <div class="login">
 <div class="row">
-	<div class="col-md-6">
-<h1>Login</h1>
+	<div class="col-md-4">
+	<h1>Login</h1>
 <form action="/session?_method=POST" method="POST">
-	Username: <input type="text" name="username"><br />
-	Password: <input type="password" name="password"><br />
+	<div class="form-group">
+	<label for="username">Login:</label>
+	<input type="text" name="username" id="username"class="form-control"><br />
+	<label for="password">Password:</label>
+	<input type="password" name="password" id="password" class="form-control"><br />
 	<button class="btn btn-primary">Login</button>
+	</div>
 </form>
 </div>
 </div>
@@ -15,21 +19,28 @@
 <br /><br />
 <div class="registeration">
 <div class="row">
-	<div class="col-md-6">
+	<div class="col-md-4">
 <h1>Create a User</h1><br />
 <form action="/user?_method=POST" method="POST">
-	Username: <input type="text" name="username"><br />
-	Email: <input type="text" name="email"><br />
-	Borough: <select name="borough">
+	<div class="form-group">
+	   <label for="username">Username:</label>
+	   <input type="text" name="username" id="username"class="form-control"><br />
+	   <label for="email">Email:</label>
+	   <input type="text" name="email" id="email" class="form-control"><br />
+		<label for="borough">Borough:</label>
+		 <select name="borough" class="form-control">
 		<option value="bronx">Bronx</option>
 		<option value="brooklyn">Brooklyn</option>
 		<option value="manhattan">Manhattan</option>
 		<option value="queens">Queens</option>
 		<option value="staten island">Staten Island</option>
 	</select><br />
-	Password: <input type="password" name="password"><br />
-	Password Confirmation: <input type="password" name="confirm_password"><br />
+	<label for="password">Password:</label>
+	<input type="password" name="password" id="password" class="form-control"><br />
+	<label for="confirm-password">Password Confirmation:</label>
+	<input type="password" name="confirm_password" id="confirm-password" class="form-control"><br />
 	<button class="btn btn-primary">Sign Up</button>
+	</div>
 </form>
 </div>
 </div>

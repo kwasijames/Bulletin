@@ -10,7 +10,7 @@ CREATE TABLE users ( id INTEGER PRIMARY KEY AUTOINCREMENT, username text, passwo
 
 -- Table used for NYC Permitted Event Information SODA API
 DROP TABLE IF EXISTS events;
-CREATE TABLE events(id INTEGER PRIMARY KEY AUTOINCREMENT, event_name text, start_date_time, end_date_time, event_type, event_location, event_borough, street_closure_type);
+CREATE TABLE events(id INTEGER PRIMARY KEY AUTOINCREMENT, event_name text, start_date_time text, end_date_time text, event_type text, event_location text, event_borough text, street_closure_type text);
 
 
 DROP TABLE IF EXISTS eventsVote;
