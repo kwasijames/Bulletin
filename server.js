@@ -153,10 +153,73 @@ app.post("/session", function(req, res){
 
 
 // allow user to save events
-app.post("/create", function(req, res){
+app.post("/events", function(req, res){
 	console.log(req.body);
+	if(req.session.valid_user){
+		// get the feilds to be inputed into the events table
+		var event_name = req.body.event_name;
+		var start_date_time = req.body.start_date_time;
+		var end_date_time = req.body.end_date_time;
+		var event_type = req.body.event_type;
+		var event_location = req.body.event_location;
+		var event_borough = req.body.event_borough;
+		var street_closure_type = req.body.street_closure_type;
+
+		// save event details to event table
+		db.run("INSERT INTO events (event_name, start_date_time, end_date_time, event_type, event_location, event_borough, street_closure_type) VALUES (?, ?, ?, ?, ?, ?, ?)", event_name, start_date_time, end_date_time, event_type, event_location, event_borough, street_closure_type, function(err) {
+
+			if(err) { throw err; }
+
+			res.redirect("/user/events");
+		});
+
+	} else {
+		res.redirect("/login");
+	}
 
 });
+
+// Render a list of all the user's events
+app.get("/user/events", function(req, res) {
+	if (req.session.valid_user) {
+		db.all("SELECT * FROM events", function(err, data){
+			if(err) { throw err; }
+			else {
+				var user_events = data;
+				console.log("in users/events");
+				console.log(user_events);
+			}
+
+		res.render("user_events.ejs", {user_events: user_events});
+		});
+	} else {
+		res.redirect("/login");
+	}
+});
+
+// delete event from database
+app.delete("/user/events", function(req, res){
+	console.log("in delete");
+	if (req.session.valid_user){
+		console.log(req.body.event_id);
+		var id = req.body.event_id;
+		// Delete event
+		db.run("DELETE FROM events WHERE id = ?", id, function(err, data){
+
+
+		if(err){ throw err; }
+
+		res.redirect("/user/events");
+
+		});
+
+	}
+	else {
+		res.redirect("/login");
+	}
+
+});
+
 
 app.listen("3000");
 console.log("Listening on port 3000");

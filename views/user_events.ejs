@@ -1,0 +1,33 @@
+<% include ./partials/head %>
+<div class="container">
+	<h1>My Events</h1>
+		<div class="row">
+			<div class="col-md-6">
+				<% for(var i = 0; i < user_events.length; i++){ %> 
+				<div>
+				<h3><%= user_events[i].event_name %></h3>
+				<h4><%= user_events[i].start_date_time %>, <%= user_events[i].end_date_time %>, <%= user_events[i].event_borough %></h4>
+					<%= user_events[i].event_type %><br /><br />
+
+	   <!-- Show more details toggle -->
+					<a class = "show-details" id = "show-details-<%= user_events[i].event_id %>" href="#">Show Details</a>
+						<div id="desc<%= user_events[i].event_id %>" style="display: none">
+							<%= user_events[i].event_location %><br />
+							<%= user_events[i].street_closure_type %>
+						</div><br />
+
+							   <form method="POST" action="/user/events?_method=DELETE" >
+								   <div class="form-group">
+								<input type="hidden" name="event_id" value="<%= user_events[i].event_id %>">
+
+								<button class="btn btn-primary" id="delete-button" >Delete</button>
+								<button class="btn btn-primary" id="directions">Directions</button>
+								</div>
+							  </form>
+						</div><br />
+				<% } %>
+			</div>
+		</div>		
+
+</div>
+<% include ./partials/footer %>
