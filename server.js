@@ -220,8 +220,9 @@ app.delete("/user/events", function(req, res){
 });
 
 // Search for events in a praticular borough
-app.get("/search", function(req, res){
+app.post("/search", function(req, res){
 	var borough = req.body.borough;
+	console.log(req.body.borough)
 	//****Make request to  the NYC Event Calendar for a list of events based on users borough**** may have to correct
 	request("https://data.cityofnewyork.us/resource/tvpp-9vvx.json?event_borough=" + borough, function(err, response, body){
 			if(err){
