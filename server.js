@@ -201,7 +201,7 @@ app.get("/user/events", function(req, res) {
 app.delete("/user/events", function(req, res){
 	console.log("in delete");
 	if (req.session.valid_user){
-		console.log(req.body.event_id);
+		console.log(req.body);
 		var id = req.body.event_id;
 		// Delete event
 		db.run("DELETE FROM events WHERE id = ?", id, function(err, data){
