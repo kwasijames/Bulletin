@@ -4,8 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	
+
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 
@@ -14,4 +13,39 @@
 
 </head>
 <body>
+	<header>
+		<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+			<div class="container">
+				<div class="navbar-headre">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#ny-streetz">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+					<a href="/events" class="navbar-brand">NYC STREETZ</a>
+				</div>
+				<div class="collapse navbar-collapse" id="ny-streetz">
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="/events">Home</a></li>
+						<li><a href="/user/events">My Events</a></li>
+						<li><a href="/login">Login</a></li>
+					</ul>
+					<form action="/search?_method=POST" method="POST" class="navbar-form navbar-right" role="search">
+						<div class="form-group">
+							<input type="text" name="borough" id="search" class="form-control" placeholder="Search by Borough">
+						</div>
+						<button type="submit" class="btn btn-primary">Search</button>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="jumbotron">
+			<div class="container">
+				<h1>NYC STREETZ </h1>
+				<h3>Community Bulletin</h3>
+			</div>	
+		</div>
+
+	</header>
 

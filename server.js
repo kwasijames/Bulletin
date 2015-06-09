@@ -66,7 +66,6 @@ app.get("/events", function(req, res){
 			} 
 			else {
 				var events = JSON.parse(body);
-				console.log(events)
 				res.render("index.ejs", {events:events});
 			}
 	});
@@ -220,6 +219,19 @@ app.delete("/user/events", function(req, res){
 
 });
 
+// Search for events in a praticular borough
+app.get("/search", function(req, res){
+	var borough = req.body.borough;
+	//****Make request to  the NYC Event Calendar for a list of events based on users borough**** may have to correct
+	request("https://data.cityofnewyork.us/resource/tvpp-9vvx.json?event_borough=" + borough, function(err, response, body){
+			if(err){
+				console.log(err)
+			} else {
+				var events = JSON.parse(body);
+				res.render("index.ejs", {events: events});
+			}
+		});
+});
 
 app.listen("3000");
 console.log("Listening on port 3000");
@@ -227,39 +239,4 @@ console.log("Listening on port 3000");
 
 
 
-// Api key for NYC Events Calendar by boroughs "https://api.cityofnewyork.us/calendar/v1/search.htm?app_id=3488f509&app_key=a58c77685001ce0633fd1b8e8fe61d8e&boroughs=Bk"
 
-
-	// If user is logged in route them to events happening in their borough else route them to all events 
-	// if(req.session.valid_user){
-	// 	console.log("In user's events based on borough");
-	// 	console.log(req.params.id);
-	// 	db.get("SELECT * FROM users WHERE username = ?", username, function(err, data){
-	// 		if(err){
-	// 			throw err;
-	// 		} else {
-	// 			user = data;
-	// 			console.log(data);
-	// 		}
-	// 	})
-		// Make request to  the NYC Event Calendar for a list of events based on users borough
-		// request("https://api.cityofnewyork.us/calendar/v1/search.htm?app_id=3488f509&app_key=a58c77685001ce0633fd1b8e8fe61d8e&boroughs=Bk", function(err, response, body){
-		// 	if(err){
-		// 		console.log(err)
-		// 	} else {
-		// 		var events = JSON.parse(body).items;
-		// 		res.render("index.ejs", {events: events});
-		// 	}
-		// });
-
-	// } else {
-
-
-
-
-// NYC Events Calander API
-//"https://api.cityofnewyork.us/calendar/v1/search.htm?"
-
-// API key ,
-	//"app_id": "3488f509",
-	//"app_key": "a58c77685001ce0633fd1b8e8fe61d8e"
